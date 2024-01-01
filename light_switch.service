@@ -1,0 +1,11 @@
+[Unit]
+Description=Light Switch Service
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python /home/pi/projects_pi/light_switch/light_switch.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
