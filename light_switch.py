@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 
+import json
+import configparser
+import json
+from dataclasses import dataclass
 from typing import List
 from gpiozero import Button
 import requests
 from time import sleep
 
 
-BUTTON_GPIO = 14
-DEVICES = ['207', '208']   # IP addresses of smart sockets on local network
+CONFIG_FILENAME = 'config.ini'
 
 
-def execute_command(device: str, command: str) -> bool:
-    url = f'http://192.168.1.{device}/relay/0?turn={command}'
+def execute_command(socket: str, command: str) -> bool:
+    url = f'http://{socket}/relay/0?turn={command}'
 
     try:
         response = requests.get(url)
@@ -26,35 +29,50 @@ def execute_command(device: str, command: str) -> bool:
         return False
 
 
-def control_lights(devices: List[str], command: str) -> None:
-    successes = [False for device in devices]
+def control_lights(sockets: List[str], command: str) -> None:
+    successes = [False for _ in sockets]
 
     while not all(successes):
-        for index, device in enumerate(devices):
+        for index, socket in enumerate(sockets):
             if not successes[index]:
-                success = execute_command(device, command)
+                success = execute_command(socket, command)
                 successes[index] = success
         
         if not all(successes):
-            sleep(5)
+            sleep(2)
 
 
-def startup():
-    button = Button(BUTTON_GPIO)
-
+def startup(button, config):
     if button.is_held:
         # Inverse logic
-        control_lights(DEVICES, 'off')
+        control_lights(config.sockets, 'off')
     else:
-        control_lights(DEVICES, 'on')
+        control_lights(config.sockets, 'on')
 
+
+@dataclass
+class Configuration:
+    sockets: List[str]
+    button_gpio: int
+
+
+def get_config(filename: str):
+    config_parser = configparser.ConfigParser()
+    config_parser.read(filename)
+    sockets = json.loads(config_parser.get('config', 'sockets'))
+    button_gpio = int(config_parser['config']['button_gpio'])
+    config = Configuration(sockets, button_gpio)
+    return config
+    
 
 if __name__ == '__main__':
-    button = Button(BUTTON_GPIO)
+    config = get_config(CONFIG_FILENAME)
+    button = Button(config.button_gpio)
+    startup(button, config)
 
     while True:
         # Inverse logic
         button.wait_for_press()
-        control_lights(DEVICES, 'off')
+        control_lights(config.sockets, 'off')
         button.wait_for_release()
-        control_lights(DEVICES, 'on')
+        control_lights(config.sockets, 'on')
