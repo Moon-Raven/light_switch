@@ -43,11 +43,15 @@ def control_lights(sockets: List[str], command: str) -> None:
 
 
 def startup(button, config):
+    print(f'Executing startup sequence...')
     if button.is_held:
         # Inverse logic
+        print(f'Startup: Turning lights off...')
         control_lights(config.sockets, 'off')
     else:
+        print(f'Startup: Turning lights on...')
         control_lights(config.sockets, 'on')
+    print(f'Startup sequence complete')
 
 
 @dataclass

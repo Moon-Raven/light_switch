@@ -5,6 +5,7 @@ After=multi-user.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/python /home/pi/projects_pi/light_switch/light_switch.py
+WorkingDirectory=/home/pi/projects_pi/light_switch
 Restart=always
 
 [Install]

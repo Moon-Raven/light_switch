@@ -25,6 +25,9 @@ which consists of the following fields:
 
 See `example_config.ini` for an example configuration.
 
+In case that you use different paths than those specified in the installation section,
+modify the paths in the `light_switch.service` file accordingly.
+
 
 # Installation
 
