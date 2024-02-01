@@ -1,4 +1,4 @@
-# Introduction
+## Introduction
 
 Light Switch is a "home automation" project for controling lights inside a house.
 The project uses a button connected to a Raspberry Pi,
@@ -29,7 +29,7 @@ In case that you use different paths than those specified in the installation se
 modify the paths in the `light_switch.service` file accordingly.
 
 
-# Installation
+## Installation
 
 1. Place `light_switch.py` on the Raspberry Pi, on `/home/pi/projects_pi/light_switch/`.
 1. Place `light_switch.service` on the Raspberry Pi, on `/etc/systemd/system/`.
